@@ -51,6 +51,32 @@ namespace Devsu.Controllers
         }
 
 
-        // Puedes extender con PUT y DELETE si deseas
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] CuentaCreateDto dto)
+        {
+            var cuenta = await _cuentaService.ObtenerCuentaPorIdAsync(id);
+            if (cuenta == null)
+                return NotFound();
+
+            cuenta.TipoCuenta = dto.TipoCuenta;
+            cuenta.SaldoInicial = dto.SaldoInicial;
+            cuenta.Estado = dto.Estado;
+            cuenta.ClienteId = dto.ClienteId;
+
+            await _cuentaService.ActualizarCuentaAsync(cuenta);
+
+            return Ok(cuenta);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var cuenta = await _cuentaService.ObtenerCuentaPorIdAsync(id);
+            if (cuenta == null) return NotFound();
+
+            await _cuentaService.EliminarCuentaAsync(id);
+            return NoContent();
+        }
+
     }
 }
